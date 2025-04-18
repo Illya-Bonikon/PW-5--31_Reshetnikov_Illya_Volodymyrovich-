@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Калькулятори електропостачання</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="wrapper">
+      <header class="header">
+        <h1>Калькулятори електропостачання</h1>
+      </header>
+
+      <nav class="nav-tabs">
+        <button class="btn" onclick="showSection('reliability')">Надійність системи</button>
+		<button class="btn" onclick="showSection('losses')">Збитки від переривання</button>
+
+      </nav>
+
+      <main>
+        <!-- Розділ надійності -->
+        <section id="reliabilitySection" class="block">
+          <div class="controls">
+            <div class="element-selector">
+              <select id="elementSelect" class="element-select">
+                <option value="">Виберіть елемент...</option>
+              </select>
+              <button id="addElementBtn" class="btn">Додати</button>
+            </div>
+
+            <div class="section-selector">
+              <label for="sectionalSwitchSelect">Секційний вимикач (для двоколової системи):</label>
+              <select id="sectionalSwitchSelect" class="section-select"></select>
+            </div>
+          </div>
+
+          <div id="elementsTableContainer" class="table-container hidden">
+            <h2>Вибрані елементи:</h2>
+            <div class="overflow-table">
+              <table id="elementsTable">
+                <thead>
+                  <tr>
+                    <th>Елемент</th>
+                    <th>ω, рік⁻¹</th>
+                    <th>tв, год.</th>
+                    <th>Кількість</th>
+                    <th>Дія</th>
+                  </tr>
+                </thead>
+                <tbody id="elementsTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div id="resultsContainer" class="results-container hidden">
+            <h2>Результати розрахунку:</h2>
+            <div class="results-content">
+              <div class="result-section">
+                <p><strong>Частота відмов одноколової системи:</strong> <span id="omegaOC"></span> рік⁻¹</p>
+                <p><strong>Середня тривалість відновлення:</strong> <span id="tB_OC"></span> год.</p>
+                <p><strong>Коефіцієнт аварійного простою:</strong> <span id="ka_OC"></span>·10⁻⁴</p>
+                <p><strong>Коефіцієнт планового простою:</strong> <span id="kp_OC"></span>·10⁻⁴</p>
+              </div>
+
+              <div class="result-section">
+                <p><strong>Частота відмов двоколової системи без секційного вимикача:</strong> <span id="omegaAK"></span>·10⁻⁴ рік⁻¹</p>
+                <p id="extraSwitchFailureRate" class="hidden">
+                  <strong>Додаткова частота відмов від секційного вимикача:</strong> <span id="selectedSwitchOmega"></span> рік⁻¹
+                </p>
+                <p>
+                  <strong>Частота відмов двоколової системи <span id="withSwitchText"></span>:</strong>
+                  <span id="omegaAK_with_section"></span> рік⁻¹
+                </p>
+              </div>
+
+              <div class="conclusion">
+                <p class="conclusion-title">Висновок:</p>
+                <p id="conclusionText"></p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Розділ збитків -->
+        <section id="lossesSection" class="block hidden">
+          <h2>Збитки від переривання електропостачання</h2>
+          <div class="input-group">
+            <label for="zper_a">Зпер.а (грн/кВт·год):</label>
+            <input type="number" id="zper_a" value="23.6" step="0.1" />
+
+            <label for="zper_p">Зпер.п (грн/кВт·год):</label>
+            <input type="number" id="zper_p" value="17.6" step="0.1" />
+
+            <label for="omega">Частота відмов (ω), рік⁻¹:</label>
+            <input type="number" id="omega" value="0.01" step="0.001" />
+
+            <label for="t_v">Середній час відновлення (t_в), год:</label>
+            <input type="number" id="t_v" value="45" step="1" />
+
+            <label for="k_p">Плановий простій (k_п), год/рік:</label>
+            <input type="number" id="k_p" value="4" step="0.1" />
+
+            <label for="P_m">Потужність трансформатора (P_м), кВт:</label>
+            <input type="number" id="P_m" value="5120" step="10" />
+
+            <label for="T_m">Кількість годин роботи (T_м), год/рік:</label>
+            <input type="number" id="T_m" value="6451" step="1" />
+
+            <button class="btn" onclick="calculateLosses()">Розрахувати</button>
+          </div>
+
+          <div class="results">
+            <div><strong>Матем. сподівання аварійного недовідпущення:</strong> <span id="result_M_W_ned_a">0</span> кВт·год</div>
+            <div><strong>Матем. сподівання планового недовідпущення:</strong> <span id="result_M_W_ned_p">0</span> кВт·год</div>
+            <div><strong>Матем. сподівання збитків:</strong> <span id="result_M_Z_per">0</span> грн</div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>

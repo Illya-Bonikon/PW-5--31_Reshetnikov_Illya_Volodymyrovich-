@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Калькулятор електричних навантажень</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Калькулятор електричних навантажень</h1>
+    
+    <div class="calculator">
+        <h2>Вхідні дані</h2>
+        
+        <div class="input-group">
+            <h3>Додати обладнання</h3>
+            <div class="equipment-inputs">
+                <label for="name">Найменування ЕП:</label>
+                <input type="text" id="name" placeholder="Назва електроприймача">
+                
+                <label for="efficiency">Номінальне значення коефіцієнта корисної дії ЕП (η<sub>н</sub>):</label>
+                <input type="number" id="efficiency" step="0.01" min="0" max="1" value="0.92">
+                
+                <label for="power-factor">Коефіцієнт потужності навантаження (cos φ):</label>
+                <input type="number" id="power-factor" step="0.01" min="0" max="1" value="0.9">
+                
+                <label for="voltage">Напруга навантаження (U<sub>н</sub>, кВ):</label>
+                <input type="number" id="voltage" step="0.01" min="0" value="0.38">
+                
+                <label for="quantity">Кількість ЕП (n, шт):</label>
+                <input type="number" id="quantity" min="1" value="1">
+                
+                <label for="nominal-power">Номінальна потужність ЕП (P<sub>н</sub>, кВт):</label>
+                <input type="number" id="nominal-power" step="0.1" min="0" value="20">
+                
+                <label for="usage-coefficient">Коефіцієнт використання (K<sub>в</sub>):</label>
+                <input type="number" id="usage-coefficient" step="0.01" min="0" max="1" value="0.15">
+                
+                <label for="reactive-power-coefficient">Коефіцієнт реактивної потужності (tgφ):</label>
+                <input type="number" id="reactive-power-coefficient" step="0.01" min="0" value="1.33">
+                
+                <button id="add-equipment">Додати обладнання</button>
+            </div>
+        </div>
+        
+        <h3>Перелік обладнання</h3>
+        <div class="equipment-list">
+            <table id="equipment-table">
+                <thead>
+                    <tr>
+                        <th>Найменування ЕП</th>
+                        <th>η<sub>н</sub></th>
+                        <th>cos φ</th>
+                        <th>U<sub>н</sub>, кВ</th>
+                        <th>n, шт</th>
+                        <th>P<sub>н</sub>, кВт</th>
+                        <th>K<sub>в</sub></th>
+                        <th>tgφ</th>
+                        <th>Дії</th>
+                    </tr>
+                </thead>
+                <tbody id="equipment-items">
+                </tbody>
+            </table>
+        </div>
+        
+        <button id="calculate">Розрахувати</button>
+        
+        <div class="results" id="results">
+            <h2>Результати розрахунків</h2>
+            
+            <div>
+                <h3>1. Загальні показники:</h3>
+                <div><strong>Добуток n·P<sub>н</sub>:</strong> <span id="n-pn"></span> кВт</div>
+            </div>
+            
+            <div>
+                <h3>2. Груповий коефіцієнт використання:</h3>
+                <div><strong>K<sub>в</sub>:</strong> <span id="group-usage-coefficient"></span></div>
+            </div>
+            
+            <div>
+                <h3>3. Ефективна кількість ЕП:</h3>
+                <div><strong>n<sub>e</sub>:</strong> <span id="effective-count"></span></div>
+            </div>
+            
+            <div>
+                <h3>4. Розрахунковий коефіцієнт активної потужності:</h3>
+                <div><strong>K<sub>р</sub>:</strong> <span id="active-power-coefficient"></span></div>
+            </div>
+            
+            <div>
+                <h3>5. Розрахункове активне навантаження:</h3>
+                <div><strong>P<sub>р</sub>:</strong> <span id="active-load"></span> кВт</div>
+            </div>
+            
+            <div>
+                <h3>6. Розрахункове реактивне навантаження:</h3>
+                <div><strong>Q<sub>р</sub>:</strong> <span id="reactive-load"></span> квар</div>
+            </div>
+            
+            <div>
+                <h3>7. Повна потужність:</h3>
+                <div><strong>S<sub>р</sub>:</strong> <span id="full-power"></span> кВ·A</div>
+            </div>
+            
+            <div>
+                <h3>8. Розрахунковий груповий струм:</h3>
+                <div><strong>I<sub>р</sub>:</strong> <span id="group-current"></span> A</div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>

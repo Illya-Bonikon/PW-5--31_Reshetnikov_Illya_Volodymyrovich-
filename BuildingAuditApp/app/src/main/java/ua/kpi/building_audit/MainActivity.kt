@@ -57,6 +57,10 @@ import ua.kpi.building_audit.practical14.BuildingDetailScreen
 import ua.kpi.building_audit.practical14.MapListScreen
 import ua.kpi.building_audit.practical15.FilterScreen
 import ua.kpi.building_audit.practical16.GpsMapScreen
+import ua.kpi.building_audit.practical17.SensorsScreen
+import ua.kpi.building_audit.practical18.AlertsScreen
+import ua.kpi.building_audit.practical19.ConsumptionScreen
+import ua.kpi.building_audit.practical20.InstrumentsScreen
 import ua.kpi.building_audit.practical9.RegistryScreen
 import ua.kpi.building_audit.ui.components.DeveloperInfoDialog
 import ua.kpi.building_audit.ui.theme.BuildingAuditTheme
@@ -65,21 +69,27 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val container = (application as EnergyAuditApp).container
+        // Сповіщення відкриває застосунок одразу на потрібному екрані.
+        val startRoute = intent.getStringExtra(EXTRA_ROUTE) ?: Destination.PZ17.route
         setContent {
             BuildingAuditTheme {
-                AppRoot(container)
+                AppRoot(container, startRoute)
             }
         }
+    }
+
+    companion object {
+        const val EXTRA_ROUTE = "route"
     }
 }
 
 /** Без активного сеансу показується вхід; завершення сеансу будь-де в застосунку повертає сюди. */
 @Composable
-fun AppRoot(container: AppContainer) {
+fun AppRoot(container: AppContainer, startRoute: String) {
     val sessionState by container.sessionManager.state.collectAsStateWithLifecycle()
     Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
         when (val state = sessionState) {
-            is SessionState.Active -> MainHub(container.errorCenter)
+            is SessionState.Active -> MainHub(container.errorCenter, startRoute)
             is SessionState.Ended -> LoginScreen(ended = state)
             SessionState.SignedOut -> LoginScreen(ended = null)
         }
@@ -95,14 +105,18 @@ enum class Destination(val route: String, val work: String, val title: String) {
     PZ13("pz13", "ПР4", "ПЗ 13: Flow і корутини"),
     PZ14("pz14", "ПР4", "ПЗ 14: Список і мапа"),
     PZ15("pz15", "ПР4", "ПЗ 15: Фільтри"),
-    PZ16("pz16", "ПР4", "ПЗ 16: GPS")
+    PZ16("pz16", "ПР4", "ПЗ 16: GPS"),
+    PZ17("pz17", "ПР5", "ПЗ 17: Сенсори"),
+    PZ18("pz18", "ПР5", "ПЗ 18: Сповіщення"),
+    PZ19("pz19", "ПР5", "ПЗ 19: Графіки"),
+    PZ20("pz20", "ПР5", "ПЗ 20: Прилади")
 }
 
 private const val DETAIL_ROUTE = "building/{id}"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainHub(errorCenter: ErrorCenter) {
+fun MainHub(errorCenter: ErrorCenter, startRoute: String) {
     val navController = rememberNavController()
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -157,7 +171,7 @@ fun MainHub(errorCenter: ErrorCenter) {
             },
             snackbarHost = { SnackbarHost(snackbarHostState) }
         ) { innerPadding ->
-            NavHost(navController, startDestination = Destination.PZ13.route, modifier = Modifier.padding(innerPadding)) {
+            NavHost(navController, startDestination = startRoute, modifier = Modifier.padding(innerPadding)) {
                 composable(Destination.PZ9.route) { RegistryScreen() }
                 composable(Destination.PZ10.route) { ApiExplorerScreen() }
                 composable(Destination.PZ11.route) { SessionScreen() }
@@ -166,6 +180,10 @@ fun MainHub(errorCenter: ErrorCenter) {
                 composable(Destination.PZ14.route) { MapListScreen(onOpenDetails = { id -> navController.navigate("building/$id") }) }
                 composable(Destination.PZ15.route) { FilterScreen() }
                 composable(Destination.PZ16.route) { GpsMapScreen() }
+                composable(Destination.PZ17.route) { SensorsScreen() }
+                composable(Destination.PZ18.route) { AlertsScreen() }
+                composable(Destination.PZ19.route) { ConsumptionScreen() }
+                composable(Destination.PZ20.route) { InstrumentsScreen() }
                 composable(DETAIL_ROUTE, arguments = listOf(navArgument("id") { type = NavType.LongType })) { entry ->
                     BuildingDetailScreen(buildingId = entry.arguments?.getLong("id") ?: 0L, onBack = { navController.popBackStack() })
                 }

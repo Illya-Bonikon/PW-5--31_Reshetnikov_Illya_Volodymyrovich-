@@ -65,8 +65,12 @@ jobs:
             mkdir -p ../screenshots
             adb shell rm -rf /sdcard/Download/screens
             adb emu geo fix 30.4572 50.4489
-            gradle connectedDebugAndroidTest || touch ../screenshots/TESTS_FAILED
-            adb exec-out screencap -p > ../screenshots/zz_last_state.png
+            adb emu sensor set temperature 21.5
+            adb emu sensor set humidity 78
+            adb emu sensor set light 240
+            adb emu sensor set acceleration 0.6:1.2:9.7
+            adb emu sensor set magnetic-field 12:18:-40
+            gradle connectedDebugAndroidTest
             adb pull /sdcard/Download/screens ../screenshots
       - name: Print screenshots
         if: always()

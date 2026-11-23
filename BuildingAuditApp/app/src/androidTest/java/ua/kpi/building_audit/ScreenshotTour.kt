@@ -25,7 +25,11 @@ import org.junit.runner.RunWith
 class ScreenshotTour {
 
     @get:Rule(order = 0)
-    val permissions: GrantPermissionRule = GrantPermissionRule.grant(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
+    val permissions: GrantPermissionRule = GrantPermissionRule.grant(
+        Manifest.permission.ACCESS_FINE_LOCATION,
+        Manifest.permission.ACCESS_COARSE_LOCATION,
+        Manifest.permission.POST_NOTIFICATIONS
+    )
 
     @get:Rule(order = 1)
     val compose = createAndroidComposeRule<MainActivity>()
@@ -63,7 +67,7 @@ class ScreenshotTour {
     fun tour() {
         compose.onNodeWithText("Аудитор").performClick()
         compose.onNodeWithText("Увійти").performClick()
-        compose.waitUntil(20_000) { compose.onAllNodesWithText("ПЗ 13: Flow і корутини").fetchSemanticsNodes().isNotEmpty() }
+        compose.waitUntil(20_000) { compose.onAllNodesWithText(Destination.PZ17.title).fetchSemanticsNodes().isNotEmpty() }
 
         // Реєстр завантажує будівлі з сервера в Room; решта екранів читає кеш.
         open(Destination.PZ9)
@@ -101,5 +105,32 @@ class ScreenshotTour {
         compose.onNodeWithText("≤ 1 км").performClick()
         pause(4_000)
         shot("pz16_gps")
+
+        // Значення датчиків задає емулятор (adb emu sensor set), вологість 78 % дає ризик конденсату.
+        open(Destination.PZ17)
+        pause(5_000)
+        shot("pz17_sensors")
+
+        shell.executeShellCommand("cmd statusbar expand-notifications").close()
+        pause(1_500)
+        shot("pz18_shade")
+        shell.executeShellCommand("cmd statusbar collapse").close()
+        pause(800)
+
+        open(Destination.PZ18)
+        compose.onAllNodesWithText("Вихід за поріг").onFirst().performClick()
+        pause(800)
+        compose.onAllNodesWithText("Відкласти на 5 хв").onFirst().performClick()
+        pause(800)
+        shot("pz18_alerts")
+
+        open(Destination.PZ19)
+        compose.onNodeWithText("24 міс.").performClick()
+        pause(1_500)
+        shot("pz19_chart")
+
+        open(Destination.PZ20)
+        pause(3_000)
+        shot("pz20_instruments")
     }
 }

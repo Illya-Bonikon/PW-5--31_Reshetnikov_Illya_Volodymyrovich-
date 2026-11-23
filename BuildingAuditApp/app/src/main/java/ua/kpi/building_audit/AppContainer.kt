@@ -25,6 +25,9 @@ import ua.kpi.building_audit.error.FileErrorJournal
 import ua.kpi.building_audit.location.LocationTracker
 import ua.kpi.building_audit.network.AndroidNetworkMonitor
 import ua.kpi.building_audit.network.RetrofitFactory
+import ua.kpi.building_audit.notifications.AlertCenter
+import ua.kpi.building_audit.notifications.AlertNotifier
+import ua.kpi.building_audit.sensors.SensorReader
 import java.io.File
 
 class EnergyAuditApp : Application() {
@@ -65,6 +68,8 @@ class AppContainer(context: Context) {
     val authRepository = AuthRepository(api, sessionManager, errorCenter)
     val diagnosticsRepository = DiagnosticsRepository(api, errorCenter, journal)
     val locationTracker = LocationTracker(context)
+    val sensorReader = SensorReader(context)
+    val alertCenter = AlertCenter(context, AlertNotifier(context).apply { createChannels() })
 
     init {
         scope.launch { errorCenter.authFailures.collect { sessionManager.end(it) } }
